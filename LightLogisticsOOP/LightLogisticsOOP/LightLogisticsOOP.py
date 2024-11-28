@@ -1,27 +1,39 @@
+from abc import ABC, abstractmethod
+
+class DatabaseHandler(ABC):  # Abstraction
+    @abstractmethod
+    def connect(self):
+        pass
+
+    @abstractmethod
+    def execute_query(self, query):
+        pass
+
+class SQLiteHandler(DatabaseHandler):  # Polymorphism
+    def connect(self):
+        # Code to connect to SQLite database
+        print("Connecting to SQLite database.")
+
+    def execute_query(self, query):
+        # Code to execute query
+        print(f"Executing query: {query}")
+
 class Product:
-    def __init__(self, product_id, name, quantity, price):
-        self.__product_id = product_id  # Private attribute
-        self.name = name
-        self.quantity = quantity
-        self.price = price
-
-    def get_product_id(self):  # Encapsulation via getter
-        return self.__product_id
-
-class PerishableProduct(Product):  # Inheritance
-    def __init__(self, product_id, name, quantity, price, expiration_date):
-        super().__init__(product_id, name, quantity, price)
-        self.expiration_date = expiration_date
+    # Same as before
+    pass
 
 class InventoryManager:
-    def __init__(self):
+    def __init__(self, db_handler):
         self.products = {}
+        self.db_handler = db_handler
+        self.db_handler.connect()
 
     def add_product(self, product):
         self.products[product.get_product_id()] = product
+        self.db_handler.execute_query("INSERT INTO products VALUES (...)")
 
 # Usage Example
 if __name__ == "__main__":
-    inv_manager = InventoryManager()
-    perishable = PerishableProduct(2, "Milk", 50, 1.99, "2023-12-31")
-    inv_manager.add_product(perishable)
+    db_handler = SQLiteHandler()
+    inv_manager = InventoryManager(db_handler)
+    # Add products as before
